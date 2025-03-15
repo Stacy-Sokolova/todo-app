@@ -6,6 +6,7 @@ import (
 	"todo-app/internal/entity"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 )
 
 func (h *Handler) Create(c *fiber.Ctx) error {
@@ -20,6 +21,7 @@ func (h *Handler) Create(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
 
+	logrus.Println("Create request")
 	return c.Status(fiber.StatusOK).SendString(fmt.Sprintf("created id: %v", id))
 }
 

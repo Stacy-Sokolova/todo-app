@@ -3,15 +3,8 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-)
-
-const (
-	defaultMaxPoolSize  = 1
-	defaultConnAttempts = 10
-	defaultConnTimeout  = time.Second
 )
 
 type Config struct {
@@ -28,7 +21,6 @@ type Postgres struct {
 }
 
 func NewPostgresDB(ctx context.Context, cfg Config) (*Postgres, error) {
-	// urlExample := "postgres://username:password@localhost:5432/database_name"
 	var url string = fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.DBName)
 	db, err := pgxpool.New(ctx, url)
 	if err != nil {
