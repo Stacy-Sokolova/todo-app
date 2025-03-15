@@ -16,18 +16,25 @@ make run
 
 # Примеры запросов
 
+## Добавление новых задач
 ![Добавление новой задачи](https://github.com/Stacy-Sokolova/todo-app/blob/main/pngs/post1.png)
 
 ![Добавление новой задачи](https://github.com/Stacy-Sokolova/todo-app/blob/main/pngs/post2.png)
 
+## Получение списка задач
 ![Получение списка задач](https://github.com/Stacy-Sokolova/todo-app/blob/main/pngs/getall.png)
 
+## Изменение задачи
 ![Изменение задачи](https://github.com/Stacy-Sokolova/todo-app/blob/main/pngs/put.png)
 
+## Проверка изменений
 ![Проверка изменений](https://github.com/Stacy-Sokolova/todo-app/blob/main/pngs/getafterchange.png)
 
+## Удаление задачи
 ![Удаление записи](https://github.com/Stacy-Sokolova/todo-app/blob/main/pngs/delete.png)
 
+## Проверка изменений
 ![Проверка изменений](https://github.com/Stacy-Sokolova/todo-app/blob/main/pngs/getafterdelete.png)
 
-![Проверка изменений postgres](https://github.com/Stacy-Sokolova/todo-app/blob/main/pngs/postgres.png)
+## Итоговая база данных postgres
+![Проверка изменений postgres](https://github.com/Stacy-Sokolova/todo-app/blob/main/pngs/posgres.png)
