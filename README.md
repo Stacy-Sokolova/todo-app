@@ -11,6 +11,9 @@ make migrate
 ```
 - для запуска приложения
 ```
+make build
+```
+```
 make run
 ```
 

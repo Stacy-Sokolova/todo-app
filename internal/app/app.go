@@ -12,7 +12,7 @@ type Server struct {
 
 func (s *Server) Run(port string, srv *fiber.App) error {
 	s = &Server{srv}
-	return s.server.Listen(port)
+	return s.server.Listen(":" + port)
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {

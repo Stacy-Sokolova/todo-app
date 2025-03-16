@@ -9,6 +9,8 @@ import (
 	"todo-app/pkg/postgres"
 )
 
+const tasksTable = "tasks"
+
 type TasksRepo struct {
 	pg *postgres.Postgres
 }
@@ -26,7 +28,7 @@ func (r *TasksRepo) Create(ctx context.Context, task entity.InsertInput) (int, e
 	}
 
 	var id int
-	sql := fmt.Sprintf("INSERT INTO %s (title, description) values ($1, $2) RETURNING id", "tasks")
+	sql := fmt.Sprintf("INSERT INTO %s (title, description) values ($1, $2) RETURNING id", tasksTable)
 
 	err = tx.QueryRow(ctx, sql, task.Title, task.Description).Scan(&id)
 	if err != nil {
@@ -38,7 +40,7 @@ func (r *TasksRepo) Create(ctx context.Context, task entity.InsertInput) (int, e
 }
 
 func (r *TasksRepo) GetAll(ctx context.Context) ([]entity.Task, error) {
-	sql := fmt.Sprintf("SELECT * FROM %s", "tasks")
+	sql := fmt.Sprintf("SELECT * FROM %s", tasksTable)
 
 	rows, err := r.pg.Pool.Query(ctx, sql)
 	if err != nil {
@@ -101,7 +103,7 @@ func (r *TasksRepo) Update(ctx context.Context, taskId int, input entity.UpdateI
 	argId++
 
 	setQuery := strings.Join(setValues, ", ")
-	sql := fmt.Sprintf("UPDATE %s SET %s WHERE id=$%d", "tasks", setQuery, argId)
+	sql := fmt.Sprintf("UPDATE %s SET %s WHERE id=$%d", tasksTable, setQuery, argId)
 	args = append(args, taskId)
 	_, err = tx.Exec(ctx, sql, args...)
 	if err != nil {
@@ -118,7 +120,7 @@ func (r *TasksRepo) Delete(ctx context.Context, taskId int) error {
 		return fmt.Errorf("postgres.Delete - r.pg.Pool.Begin: %v", err)
 	}
 
-	sql := fmt.Sprintf("DELETE FROM %s WHERE id=$1", "tasks")
+	sql := fmt.Sprintf("DELETE FROM %s WHERE id=$1", tasksTable)
 	_, err = tx.Exec(ctx, sql, taskId)
 	if err != nil {
 		tx.Rollback(ctx)

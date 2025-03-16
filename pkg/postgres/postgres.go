@@ -21,7 +21,7 @@ type Postgres struct {
 }
 
 func NewPostgresDB(ctx context.Context, cfg Config) (*Postgres, error) {
-	var url string = fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.DBName)
+	var url string = fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.DBName)
 	db, err := pgxpool.New(ctx, url)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create connection pool: %w", err)

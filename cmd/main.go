@@ -15,8 +15,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//migrate -path ./dbserver/migrations -database 'postgres://postgres:Stacy@0.0.0.0:5432/postgres?sslmode=disable' down
-
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 
@@ -26,12 +24,12 @@ func main() {
 
 	rootCtx := context.Background()
 	db, err := postgres.NewPostgresDB(rootCtx, postgres.Config{
-		Host:     os.Getenv("POSTGRES_HOST"),
+		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("POSTGRES_PORT"),
 		Username: os.Getenv("POSTGRES_USER"),
 		DBName:   os.Getenv("POSTGRES_DB"),
 		SSLMode:  os.Getenv("SSLMODE"),
-		Password: os.Getenv("DB_PASSWORD"),
+		Password: os.Getenv("POSTGRES_PASSWORD"),
 	})
 	if err != nil {
 		logrus.Fatalf("failed to initialize db: %s", err.Error())
