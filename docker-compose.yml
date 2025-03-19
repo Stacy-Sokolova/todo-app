@@ -7,11 +7,12 @@ services:
     env_file:
       - .env
     volumes:
-    - ./.database/postgres/data:/var/lib/postgresql/data
+    - ./schema/:/docker-entrypoint-initdb.d
+    - pg-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - 5436:5432
+      - 5432:5432
 
   app:
     build: ./
@@ -24,3 +25,6 @@ services:
       - db
     environment:
       - DB_PASSWORD=${DB_PASSWORD}
+
+volumes:
+  pg-data:
