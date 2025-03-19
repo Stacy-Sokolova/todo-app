@@ -24,10 +24,10 @@ func (t *TasksService) GetAll(ctx context.Context) ([]entity.Task, error) {
 	return t.repo.Tasks.GetAll(ctx)
 }
 
-func (t *TasksService) Update(ctx context.Context, taskId int, input entity.UpdateInput) error {
+func (t *TasksService) Update(ctx context.Context, taskId int, input entity.UpdateInput) (int64, error) {
 	return t.repo.Tasks.Update(ctx, taskId, input)
 }
 
-func (t *TasksService) Delete(ctx context.Context, taskId int) error {
+func (t *TasksService) Delete(ctx context.Context, taskId int) (int64, error) {
 	return t.repo.Tasks.Delete(ctx, taskId)
 }

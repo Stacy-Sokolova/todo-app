@@ -9,8 +9,8 @@ import (
 type Tasks interface {
 	Create(ctx context.Context, task entity.InsertInput) (int, error)
 	GetAll(ctx context.Context) ([]entity.Task, error)
-	Update(ctx context.Context, taskId int, input entity.UpdateInput) error
-	Delete(ctx context.Context, taskId int) error
+	Update(ctx context.Context, taskId int, input entity.UpdateInput) (int64, error)
+	Delete(ctx context.Context, taskId int) (int64, error)
 }
 
 type Service struct {

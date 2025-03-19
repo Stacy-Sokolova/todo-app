@@ -46,12 +46,12 @@ func (h *Handler) Update(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
 	}
 
-	err = h.service.Tasks.Update(c.Context(), id, input)
+	affected, err := h.service.Tasks.Update(c.Context(), id, input)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	return c.Status(fiber.StatusOK).SendString(fmt.Sprintf("updated: %v", affected))
 }
 
 func (h *Handler) Delete(c *fiber.Ctx) error {
@@ -60,10 +60,10 @@ func (h *Handler) Delete(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).SendString("Invalid id param")
 	}
 
-	err = h.service.Tasks.Delete(c.Context(), id)
+	affected, err := h.service.Tasks.Delete(c.Context(), id)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
 
-	return c.SendStatus(fiber.StatusOK)
+	return c.Status(fiber.StatusOK).SendString(fmt.Sprintf("deleted: %v", affected))
 }

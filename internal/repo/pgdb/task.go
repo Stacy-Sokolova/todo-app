@@ -69,10 +69,10 @@ func (r *TasksRepo) GetAll(ctx context.Context) ([]entity.Task, error) {
 	return tasks, nil
 }
 
-func (r *TasksRepo) Update(ctx context.Context, taskId int, input entity.UpdateInput) error {
+func (r *TasksRepo) Update(ctx context.Context, taskId int, input entity.UpdateInput) (int64, error) {
 	tx, err := r.pg.Pool.Begin(ctx)
 	if err != nil {
-		return fmt.Errorf("postgres.Update - r.pg.Pool.Begin: %v", err)
+		return 0, fmt.Errorf("postgres.Update - r.pg.Pool.Begin: %v", err)
 	}
 
 	setValues := make([]string, 0)
@@ -105,27 +105,27 @@ func (r *TasksRepo) Update(ctx context.Context, taskId int, input entity.UpdateI
 	setQuery := strings.Join(setValues, ", ")
 	sql := fmt.Sprintf("UPDATE %s SET %s WHERE id=$%d", tasksTable, setQuery, argId)
 	args = append(args, taskId)
-	_, err = tx.Exec(ctx, sql, args...)
+	n, err := tx.Exec(ctx, sql, args...)
 	if err != nil {
 		tx.Rollback(ctx)
-		return fmt.Errorf("postgres.Update - tx.Exec: %v", err)
+		return 0, fmt.Errorf("postgres.Update - tx.Exec: %v", err)
 	}
 
-	return tx.Commit(ctx)
+	return n.RowsAffected(), tx.Commit(ctx)
 }
 
-func (r *TasksRepo) Delete(ctx context.Context, taskId int) error {
+func (r *TasksRepo) Delete(ctx context.Context, taskId int) (int64, error) {
 	tx, err := r.pg.Pool.Begin(ctx)
 	if err != nil {
-		return fmt.Errorf("postgres.Delete - r.pg.Pool.Begin: %v", err)
+		return 0, fmt.Errorf("postgres.Delete - r.pg.Pool.Begin: %v", err)
 	}
 
 	sql := fmt.Sprintf("DELETE FROM %s WHERE id=$1", tasksTable)
-	_, err = tx.Exec(ctx, sql, taskId)
+	n, err := tx.Exec(ctx, sql, taskId)
 	if err != nil {
 		tx.Rollback(ctx)
-		return fmt.Errorf("postgres.Delete - tx.Exec: %v", err)
+		return 0, fmt.Errorf("postgres.Delete - tx.Exec: %v", err)
 	}
 
-	return tx.Commit(ctx)
+	return n.RowsAffected(), tx.Commit(ctx)
 }
