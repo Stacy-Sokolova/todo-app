@@ -2,19 +2,22 @@ package app
 
 import (
 	"context"
-
-	"github.com/gofiber/fiber/v2"
+	"net/http"
 )
 
 type Server struct {
-	server *fiber.App
+	server *http.Server
 }
 
-func (s *Server) Run(port string, srv *fiber.App) error {
-	s = &Server{srv}
-	return s.server.Listen(":" + port)
+func (s *Server) Run(port string, handler http.Handler) error {
+	s.server = &http.Server{
+		Addr:    ":" + port,
+		Handler: handler,
+	}
+
+	return s.server.ListenAndServe()
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
-	return s.server.Shutdown()
+	return s.server.Shutdown(ctx)
 }

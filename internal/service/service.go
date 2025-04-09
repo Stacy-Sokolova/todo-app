@@ -6,6 +6,8 @@ import (
 	"todo-app/internal/repo"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Tasks interface {
 	Create(ctx context.Context, task entity.InsertInput) (int, error)
 	GetAll(ctx context.Context) ([]entity.Task, error)
