@@ -1,69 +1,87 @@
 package handler
 
 import (
-	"fmt"
+	"net/http"
 	"strconv"
 	"todo-app/internal/entity"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
-func (h *Handler) Create(c *fiber.Ctx) error {
+type errorResponse struct {
+	Message string `json:"message"`
+}
+
+func (h *Handler) Create(c *gin.Context) {
 	var input entity.InsertInput
 
-	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	if err := c.BindJSON(&input); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse{err.Error()})
+		return
 	}
 
-	id, err := h.service.Tasks.Create(c.Context(), input)
+	id, err := h.service.Tasks.Create(c.Request.Context(), input)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
+		return
 	}
 
 	logrus.Println("Create request")
-	return c.Status(fiber.StatusOK).SendString(fmt.Sprintf("created id: %v", id))
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"created id": id,
+	})
 }
 
-func (h *Handler) GetAll(c *fiber.Ctx) error {
-	result, err := h.service.Tasks.GetAll(c.Context())
+func (h *Handler) GetAll(c *gin.Context) {
+	result, err := h.service.Tasks.GetAll(c.Request.Context())
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
+		return
 	}
 
-	return c.JSON(result)
+	c.JSON(http.StatusOK, result)
 }
 
-func (h *Handler) Update(c *fiber.Ctx) error {
-	id, err := strconv.Atoi(c.Params("id"))
+func (h *Handler) Update(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid id param")
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse{err.Error()})
+		return
 	}
 
 	var input entity.UpdateInput
 
-	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	if err := c.BindJSON(&input); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse{err.Error()})
+		return
 	}
 
-	affected, err := h.service.Tasks.Update(c.Context(), id, input)
+	affected, err := h.service.Tasks.Update(c.Request.Context(), id, input)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
+		return
 	}
 
-	return c.Status(fiber.StatusOK).SendString(fmt.Sprintf("updated: %v", affected))
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"updated": affected,
+	})
 }
 
-func (h *Handler) Delete(c *fiber.Ctx) error {
-	id, err := strconv.Atoi(c.Params("id"))
+func (h *Handler) Delete(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid id param")
+		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse{err.Error()})
+		return
 	}
 
-	affected, err := h.service.Tasks.Delete(c.Context(), id)
+	affected, err := h.service.Tasks.Delete(c.Request.Context(), id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
+		return
 	}
 
-	return c.Status(fiber.StatusOK).SendString(fmt.Sprintf("deleted: %v", affected))
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"updated": affected,
+	})
 }

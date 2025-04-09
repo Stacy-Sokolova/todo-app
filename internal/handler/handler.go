@@ -3,7 +3,7 @@ package handler
 import (
 	"todo-app/internal/service"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
@@ -14,13 +14,13 @@ func NewHandler(srv *service.Service) *Handler {
 	return &Handler{service: srv}
 }
 
-func (h *Handler) InitRoutes() *fiber.App {
-	router := fiber.New()
+func (h *Handler) InitRoutes() *gin.Engine {
+	router := gin.New()
 
-	router.Post("/tasks", h.Create)
-	router.Get("/tasks", h.GetAll)
-	router.Put("/tasks/:id", h.Update)
-	router.Delete("/tasks/:id", h.Delete)
+	router.POST("/tasks", h.Create)
+	router.GET("/tasks", h.GetAll)
+	router.PUT("/tasks/:id", h.Update)
+	router.DELETE("/tasks/:id", h.Delete)
 
 	return router
 }
