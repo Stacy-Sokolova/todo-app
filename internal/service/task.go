@@ -7,27 +7,27 @@ import (
 )
 
 type TasksService struct {
-	repo *repo.Repository
+	repo repo.Tasks
 }
 
-func NewTasksService(repo *repo.Repository) *TasksService {
+func NewTasksService(repo repo.Tasks) *TasksService {
 	return &TasksService{
 		repo: repo,
 	}
 }
 
-func (t *TasksService) Create(ctx context.Context, task entity.InsertInput) (int, error) {
-	return t.repo.Tasks.Create(ctx, task)
+func (t *TasksService) Create(ctx context.Context, userId int, task entity.InsertInput) (int, error) {
+	return t.repo.Create(ctx, userId, task)
 }
 
-func (t *TasksService) GetAll(ctx context.Context) ([]entity.Task, error) {
-	return t.repo.Tasks.GetAll(ctx)
+func (t *TasksService) GetAll(ctx context.Context, userId int) ([]entity.Task, error) {
+	return t.repo.GetAll(ctx, userId)
 }
 
-func (t *TasksService) Update(ctx context.Context, taskId int, input entity.UpdateInput) (int64, error) {
-	return t.repo.Tasks.Update(ctx, taskId, input)
+func (t *TasksService) Update(ctx context.Context, userId int, taskId int, input entity.UpdateInput) (int64, error) {
+	return t.repo.Update(ctx, userId, taskId, input)
 }
 
-func (t *TasksService) Delete(ctx context.Context, taskId int) (int64, error) {
-	return t.repo.Tasks.Delete(ctx, taskId)
+func (t *TasksService) Delete(ctx context.Context, userId int, taskId int) (int64, error) {
+	return t.repo.Delete(ctx, userId, taskId)
 }

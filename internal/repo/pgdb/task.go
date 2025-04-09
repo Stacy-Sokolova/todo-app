@@ -21,7 +21,7 @@ func NewTasksRepo(pg *postgres.Postgres) *TasksRepo {
 	}
 }
 
-func (r *TasksRepo) Create(ctx context.Context, task entity.InsertInput) (int, error) {
+func (r *TasksRepo) Create(ctx context.Context, userId int, task entity.InsertInput) (int, error) {
 	tx, err := r.pg.Pool.Begin(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("postgres.Create - r.pg.Pool.Begin: %v", err)
@@ -39,7 +39,7 @@ func (r *TasksRepo) Create(ctx context.Context, task entity.InsertInput) (int, e
 	return id, tx.Commit(ctx)
 }
 
-func (r *TasksRepo) GetAll(ctx context.Context) ([]entity.Task, error) {
+func (r *TasksRepo) GetAll(ctx context.Context, userId int) ([]entity.Task, error) {
 	sql := fmt.Sprintf("SELECT * FROM %s", tasksTable)
 
 	rows, err := r.pg.Pool.Query(ctx, sql)
@@ -69,7 +69,7 @@ func (r *TasksRepo) GetAll(ctx context.Context) ([]entity.Task, error) {
 	return tasks, nil
 }
 
-func (r *TasksRepo) Update(ctx context.Context, taskId int, input entity.UpdateInput) (int64, error) {
+func (r *TasksRepo) Update(ctx context.Context, userId int, taskId int, input entity.UpdateInput) (int64, error) {
 	tx, err := r.pg.Pool.Begin(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("postgres.Update - r.pg.Pool.Begin: %v", err)
@@ -114,7 +114,7 @@ func (r *TasksRepo) Update(ctx context.Context, taskId int, input entity.UpdateI
 	return n.RowsAffected(), tx.Commit(ctx)
 }
 
-func (r *TasksRepo) Delete(ctx context.Context, taskId int) (int64, error) {
+func (r *TasksRepo) Delete(ctx context.Context, userId int, taskId int) (int64, error) {
 	tx, err := r.pg.Pool.Begin(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("postgres.Delete - r.pg.Pool.Begin: %v", err)

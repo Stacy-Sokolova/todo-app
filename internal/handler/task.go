@@ -14,6 +14,12 @@ type errorResponse struct {
 }
 
 func (h *Handler) Create(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
+		return
+	}
+
 	var input entity.InsertInput
 
 	if err := c.BindJSON(&input); err != nil {
@@ -21,7 +27,7 @@ func (h *Handler) Create(c *gin.Context) {
 		return
 	}
 
-	id, err := h.service.Tasks.Create(c.Request.Context(), input)
+	id, err := h.service.Tasks.Create(c.Request.Context(), userId, input)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
 		return
@@ -34,7 +40,13 @@ func (h *Handler) Create(c *gin.Context) {
 }
 
 func (h *Handler) GetAll(c *gin.Context) {
-	result, err := h.service.Tasks.GetAll(c.Request.Context())
+	userId, err := getUserId(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
+		return
+	}
+
+	result, err := h.service.Tasks.GetAll(c.Request.Context(), userId)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
 		return
@@ -44,6 +56,12 @@ func (h *Handler) GetAll(c *gin.Context) {
 }
 
 func (h *Handler) Update(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
+		return
+	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse{err.Error()})
@@ -57,7 +75,7 @@ func (h *Handler) Update(c *gin.Context) {
 		return
 	}
 
-	affected, err := h.service.Tasks.Update(c.Request.Context(), id, input)
+	affected, err := h.service.Tasks.Update(c.Request.Context(), userId, id, input)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
 		return
@@ -69,13 +87,19 @@ func (h *Handler) Update(c *gin.Context) {
 }
 
 func (h *Handler) Delete(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
+		return
+	}
+
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, errorResponse{err.Error()})
 		return
 	}
 
-	affected, err := h.service.Tasks.Delete(c.Request.Context(), id)
+	affected, err := h.service.Tasks.Delete(c.Request.Context(), userId, id)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, errorResponse{err.Error()})
 		return
